@@ -5,7 +5,24 @@ buildscript {
         classpath 'ru.alfalab.gradle:cucumber-reporting-gradle-plugin:0.1.0'
         classpath 'ru.alfalab.gradle:cucumber-parallel-test-gradle-plugin:0.3.1'
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.10.0'
+        classpath "io.qameta.allure:allure-gradle:2.3"
+        classpath "io.qameta.allure:allure-cucumber4-jvm:2.19.0"
     }
+}
+
+plugins {
+    id 'io.qameta.allure' version '2.8.1'
+}
+
+allure {
+    autoconfigure = true
+    version = '2.1.1'  // Latest Allure Version
+
+    useJUnit5 {
+        version = '2.8.1' // Latest Allure Version
+    }
+
+    aspectjweaver = true
 }
 
 repositories {
@@ -33,6 +50,10 @@ if (project.hasProperty('projVersion')) {
 
 dependencies {
     compile 'ru.alfabank.tests:akita:4.0.0'
+    implementation group: 'com.jayway.jsonpath', name: 'json-path', version: '2.7.0'
+    implementation 'io.qameta.allure:allure-rest-assured:2.19.0'
+    testRuntimeOnly('io.qameta.allure:allure-junit5:2.14.0')
+    testImplementation('io.qameta.allure:allure-selenide:2.14.0')
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -50,7 +71,7 @@ test {
     //параметры galen framework для возможности скролла страницы и снятния полного скриншота страницы
     jvmArgs += "-Dgalen.browser.screenshots.fullPage=true"
     jvmArgs += "-Dgalen.browser.screenshots.fullPage.scrollWait=50"
-
+    jvmArgs +=  "-Dcucumber.options=\"--plugin io.qameta.allure.cucumber4jvm.AllureCucumber4Jvm\""
 
     if (tag) {
         jvmArgs += "-Dcucumber.options=--tags ${tag}" //параметр для запуска тестов с использование тэгов
@@ -92,4 +113,11 @@ task makeZip(type: Zip) {
 license {
     header rootProject.file('HEADER')
     strictCheck true
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+    testLogging {     // This is for logging and can be removed.
+        events("passed", "skipped", "failed")
+    }
 }

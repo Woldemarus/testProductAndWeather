@@ -20,17 +20,15 @@ import org.openqa.selenium.support.FindBy;
 import ru.alfabank.alfatest.cucumber.annotations.Name;
 import ru.alfabank.alfatest.cucumber.api.AkitaPage;
 
-import java.util.List;
+@Name("Основная")
+public class MainPage extends AkitaPage {
 
-@Name("Репозитории")
-public class RepositoriesPage extends AkitaPage {
+    @FindBy(css = ".ils-title")
+    @Name("Хедер Desktop}")
+    public SelenideElement headerDesktop;
 
-    @FindBy(css = ".repo-list-item h3")
-    @Name("Названия репозиториев")
-    public List<SelenideElement> repoNames;
-
-    public List<SelenideElement> getRepoNames() {
-        return repoNames;
-    }
+    @FindBy(css = ".ant-space-item button")
+    @Name("Выход")
+    public SelenideElement buttonExit;
 
 }
